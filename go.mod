@@ -10,7 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.48
 	github.com/aws/aws-sdk-go-v2/service/apigateway v1.28.2
 	github.com/briandowns/spinner v1.23.1
-	github.com/elazarl/goproxy v1.2.5
+	github.com/elazarl/goproxy v1.2.8
 	github.com/fsnotify/fsnotify v1.8.0
 	github.com/go-test/deep v1.1.1
 	github.com/gosimple/slug v1.15.0
@@ -56,8 +56,8 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
-	golang.org/x/net v0.33.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
-	golang.org/x/term v0.27.0 // indirect
+	golang.org/x/net v0.34.0 // indirect
+	golang.org/x/sys v0.29.0 // indirect
+	golang.org/x/term v0.28.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 )
