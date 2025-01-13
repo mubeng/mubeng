@@ -6,11 +6,11 @@ toolchain go1.23.4
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/aws/aws-sdk-go-v2 v1.32.8
-	github.com/aws/aws-sdk-go-v2/config v1.28.9
-	github.com/aws/aws-sdk-go-v2/credentials v1.17.50
+	github.com/aws/aws-sdk-go-v2/config v1.28.10
+	github.com/aws/aws-sdk-go-v2/credentials v1.17.51
 	github.com/aws/aws-sdk-go-v2/service/apigateway v1.28.4
 	github.com/briandowns/spinner v1.23.1
-	github.com/elazarl/goproxy v1.2.8
+	github.com/elazarl/goproxy v1.3.0
 	github.com/fsnotify/fsnotify v1.8.0
 	github.com/go-test/deep v1.1.1
 	github.com/gosimple/slug v1.15.0
@@ -37,7 +37,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.12.8 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.24.9 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.28.8 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.33.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.33.6 // indirect
 	github.com/aws/smithy-go v1.22.1 // indirect
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
