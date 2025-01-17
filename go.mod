@@ -10,7 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.53
 	github.com/aws/aws-sdk-go-v2/service/apigateway v1.28.6
 	github.com/briandowns/spinner v1.23.1
-	github.com/elazarl/goproxy v1.4.0
+	github.com/elazarl/goproxy v1.5.0
 	github.com/fsnotify/fsnotify v1.8.0
 	github.com/go-test/deep v1.1.1
 	github.com/gosimple/slug v1.15.0
