@@ -12,3 +12,5 @@ var HopHeaders = []string{
 	"Transfer-Encoding",
 	"Upgrade",
 }
+
+var ServerType string

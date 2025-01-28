@@ -3,6 +3,7 @@ package runner
 import (
 	"errors"
 	"fmt"
+	"github.com/mubeng/mubeng/pkg/mubeng"
 	"io"
 	"os"
 	"path/filepath"
@@ -45,7 +46,8 @@ func validate(opt *common.Options) error {
 	if err != nil {
 		return err
 	}
-
+	// get server type
+	mubeng.ServerType = opt.Type
 	opt.ProxyManager, err = proxymanager.New(opt.File)
 	if err != nil {
 		return err

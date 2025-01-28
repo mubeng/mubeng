@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"strings"
+	"sync/atomic"
 
 	"github.com/elazarl/goproxy"
 	"github.com/hashicorp/go-retryablehttp"
@@ -161,23 +162,19 @@ func (p *Proxy) onResponse(resp *http.Response, ctx *goproxy.ProxyCtx) *http.Res
 }
 
 func (p *Proxy) rotateProxy() string {
-	var proxy string
-	var err error
-
-	if ok >= p.Options.Rotate {
-		proxy, err = p.Options.ProxyManager.Rotate(p.Options.Method)
+	if currentProxy == "" || int(ok) >= p.Options.Rotate {
+		proxy, err := p.Options.ProxyManager.Rotate(p.Options.Method)
 		if err != nil {
 			log.Fatalf("Could not rotate proxy IP: %s", err)
 		}
-
-		if ok >= p.Options.Rotate {
-			ok = 1
-		}
+		p.mu.Lock()
+		currentProxy = proxy
+		ok = 1
+		p.mu.Unlock()
 	} else {
-		ok++
+		atomic.AddInt64(&ok, 1)
 	}
-
-	return proxy
+	return currentProxy
 }
 
 func (p *Proxy) removeProxy(target string) {

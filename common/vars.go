@@ -49,10 +49,12 @@ Options:
         --max-redirs <N>             Max. redirects allowed (default: 10)
     -s, --sync                       Syncrounus mode
     -w, --watch                      Watch proxy file, live-reload from changes
+    	--type                       http or socks5 proxy server type ( default: http )
 
 Examples:
   mubeng -f proxies.txt --check --output live.txt
   mubeng -a localhost:8080 -f live.txt -r 10 -w
+  mubeng -a localhost:8080 -f live.txt -r 10 -w --type socks5
 
 `
 )

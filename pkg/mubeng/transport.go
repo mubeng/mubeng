@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/mubeng/mubeng/pkg/helper/awsurl"
 	"h12.io/socks"
@@ -18,7 +19,10 @@ import (
 func Transport(p string) (*http.Transport, error) {
 	var proxyURL *url.URL
 	var err error
-
+	// socks5 server only support socks proxy
+	if ServerType == "socks5" && !strings.HasPrefix(p, "socks") {
+		return nil, fmt.Errorf("%s os not socks proxy", p)
+	}
 	tr := new(http.Transport)
 
 	if awsurl.IsURL(p) {
