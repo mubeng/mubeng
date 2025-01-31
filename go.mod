@@ -1,6 +1,7 @@
 module github.com/mubeng/mubeng
 
-go 1.21
+go 1.22
+
 toolchain go1.23.4
 
 require (
@@ -14,6 +15,7 @@ require (
 	github.com/fsnotify/fsnotify v1.8.0
 	github.com/go-test/deep v1.1.1
 	github.com/gosimple/slug v1.15.0
+	github.com/h12w/go-socks5 v0.0.0-20200522160539-76189e178364
 	github.com/hashicorp/go-retryablehttp v0.7.7
 	github.com/henvic/httpretty v0.1.4
 	github.com/inconshreveable/go-update v0.0.0-20160112193335-8152e7eb6ccf
@@ -23,8 +25,10 @@ require (
 	github.com/projectdiscovery/gologger v1.1.4
 	github.com/sourcegraph/conc v0.3.0
 	github.com/tcnksm/go-latest v0.0.0-20170313132115-e3007ae9052e
+	github.com/things-go/go-socks5 v0.0.5
 	github.com/valyala/fastrand v1.1.0
 	github.com/valyala/fasttemplate v1.2.2
+	golang.org/x/net v0.34.0
 	h12.io/socks v1.0.3
 )
 
@@ -56,7 +60,6 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
-	golang.org/x/net v0.34.0 // indirect
 	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/term v0.28.0 // indirect
 	golang.org/x/text v0.21.0 // indirect

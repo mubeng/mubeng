@@ -32,4 +32,5 @@ type Options struct {
 	MaxErrors    int
 	MaxRedirects int
 	MaxRetries   int
+	Type         string
 }

@@ -9,12 +9,12 @@ import (
 )
 
 var (
-	handler *Proxy
-	server  *http.Server
-	dump    *httpretty.Logger
-	mime    = "text/plain"
-	log     *logo.Logger
-	ok      = 1
-
-	mutex = sync.Mutex{}
+	handler      *Proxy
+	server       *http.Server
+	dump         *httpretty.Logger
+	mime         = "text/plain"
+	log          *logo.Logger
+	ok           int64
+	currentProxy string
+	mutex        = sync.Mutex{}
 )
