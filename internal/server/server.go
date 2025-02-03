@@ -7,9 +7,9 @@ import (
 
 	"github.com/elazarl/goproxy"
 	"github.com/henvic/httpretty"
+	"github.com/mbndr/logo"
 	"github.com/mubeng/mubeng/common"
 	"github.com/mubeng/mubeng/internal/proxygateway"
-	"github.com/mbndr/logo"
 )
 
 // Run proxy server with a user defined listener.
@@ -40,6 +40,7 @@ func Run(opt *common.Options) {
 	handler = &Proxy{}
 	handler.Options = opt
 	handler.HTTPProxy = goproxy.NewProxyHttpServer()
+	handler.HTTPProxy.AllowHTTP2 = true
 	handler.HTTPProxy.OnRequest().DoFunc(handler.onRequest)
 	handler.HTTPProxy.OnRequest().HandleConnectFunc(handler.onConnect)
 	handler.HTTPProxy.OnResponse().DoFunc(handler.onResponse)
