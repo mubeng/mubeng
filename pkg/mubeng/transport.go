@@ -42,7 +42,11 @@ func Transport(p string) (*http.Transport, error) {
 	}
 
 	tr.DisableKeepAlives = true
-	tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	tr.TLSClientConfig = &tls.Config{
+		InsecureSkipVerify: true,
+		MinVersion:         tls.VersionTLS10,
+		CipherSuites:       getUnsafeCipherSuites(),
+	}
 
 	return tr, nil
 }
