@@ -49,7 +49,11 @@ func TestTransport(t *testing.T) {
 			wantTr: &http.Transport{
 				Proxy:             http.ProxyURL(httpURL),
 				DisableKeepAlives: true,
-				TLSClientConfig:   &tls.Config{InsecureSkipVerify: true},
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: true,
+					MinVersion:         tls.VersionTLS10,
+					CipherSuites:       getUnsafeCipherSuites(),
+				},
 			},
 			wantErr: false,
 		},
@@ -59,7 +63,11 @@ func TestTransport(t *testing.T) {
 			wantTr: &http.Transport{
 				Proxy:             http.ProxyURL(httpsURL),
 				DisableKeepAlives: true,
-				TLSClientConfig:   &tls.Config{InsecureSkipVerify: true},
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: true,
+					MinVersion:         tls.VersionTLS10,
+					CipherSuites:       getUnsafeCipherSuites(),
+				},
 			},
 			wantErr: false,
 		},
@@ -69,7 +77,11 @@ func TestTransport(t *testing.T) {
 			wantTr: &http.Transport{
 				Dial:              socks.Dial(socks5Proxy),
 				DisableKeepAlives: true,
-				TLSClientConfig:   &tls.Config{InsecureSkipVerify: true},
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: true,
+					MinVersion:         tls.VersionTLS10,
+					CipherSuites:       getUnsafeCipherSuites(),
+				},
 			},
 			wantErr: false,
 		},
@@ -79,7 +91,11 @@ func TestTransport(t *testing.T) {
 			wantTr: &http.Transport{
 				Dial:              socks.Dial(socks4Proxy),
 				DisableKeepAlives: true,
-				TLSClientConfig:   &tls.Config{InsecureSkipVerify: true},
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: true,
+					MinVersion:         tls.VersionTLS10,
+					CipherSuites:       getUnsafeCipherSuites(),
+				},
 			},
 			wantErr: false,
 		},
