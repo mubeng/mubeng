@@ -8,10 +8,10 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-retryablehttp"
+	"github.com/logrusorgru/aurora"
 	"github.com/mubeng/mubeng/common"
 	"github.com/mubeng/mubeng/pkg/helper"
 	"github.com/mubeng/mubeng/pkg/mubeng"
-	"github.com/logrusorgru/aurora"
 	"github.com/sourcegraph/conc/pool"
 )
 
@@ -30,7 +30,7 @@ func Do(opt *common.Options) {
 
 		p.Go(func() {
 			addr, err := check(c, address, opt.Timeout)
-			if len(opt.Countries) > 0 && !isMatchCC(opt.Countries, addr.Country) {
+			if len(opt.Countries) > 0 && !isMatchCC(opt.Countries, addr.Country.CountryCode) {
 				return
 			}
 
@@ -41,7 +41,7 @@ func Do(opt *common.Options) {
 			} else {
 				fmt.Printf(
 					"[%s] [%s] [%s] %s (%s)\n",
-					aurora.Green("LIVE"), aurora.Magenta(addr.Country),
+					aurora.Green("LIVE"), aurora.Magenta(addr.Country.CountryCode),
 					aurora.Cyan(addr.IP), address, aurora.Yellow(addr.Duration),
 				)
 
@@ -69,16 +69,16 @@ func isMatchCC(cc []string, code string) bool {
 	return false
 }
 
-func check(c *retryablehttp.Client, address string, timeout time.Duration) (IPInfo, error) {
+func check(c *retryablehttp.Client, address string, timeout time.Duration) (GeoIPAPIResponse, error) {
 	req, err := retryablehttp.NewRequest("GET", endpoint, nil)
 	if err != nil {
-		return ipinfo, err
+		return geoIPAPIResp, err
 	}
 	req.Header.Add("Connection", "close")
 
 	tr, err := mubeng.Transport(address)
 	if err != nil {
-		return ipinfo, err
+		return geoIPAPIResp, err
 	}
 
 	proxy := &mubeng.Proxy{
@@ -88,7 +88,7 @@ func check(c *retryablehttp.Client, address string, timeout time.Duration) (IPIn
 
 	client, err := proxy.New(req.Request)
 	if err != nil {
-		return ipinfo, err
+		return geoIPAPIResp, err
 	}
 
 	c.HTTPClient = client
@@ -97,23 +97,25 @@ func check(c *retryablehttp.Client, address string, timeout time.Duration) (IPIn
 	start := time.Now()
 	resp, err := c.Do(req)
 	if err != nil {
-		return ipinfo, err
+		return geoIPAPIResp, err
 	}
 	duration := time.Since(start)
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return ipinfo, err
-	}
+		_ = resp.Body.Close()
 
-	err = json.Unmarshal(body, &ipinfo)
-	if err != nil {
-		return ipinfo, err
+		return geoIPAPIResp, err
 	}
-	ipinfo.Duration = duration.Truncate(time.Millisecond)
-
 	defer resp.Body.Close()
+
+	err = json.Unmarshal(body, &geoIPAPIResp)
+	if err != nil {
+		return geoIPAPIResp, err
+	}
+	geoIPAPIResp.Duration = duration.Truncate(time.Millisecond)
+
 	defer tr.CloseIdleConnections()
 
-	return ipinfo, nil
+	return geoIPAPIResp, nil
 }

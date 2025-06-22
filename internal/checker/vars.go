@@ -1,7 +1,7 @@
 package checker
 
 var (
-	ipinfo IPInfo
+	geoIPAPIResp GeoIPAPIResponse
 
-	endpoint = "https://ipinfo.io/json"
+	endpoint = "https://api.geoipapi.com/json"
 )
