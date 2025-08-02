@@ -33,6 +33,11 @@ Options:
     -c, --check                      Perform proxy check
     -g, --goroutine <N>              Max. goroutine to use (default: 50)
         --only-cc <AA>,<BB>          Only for specific country code (comma separated)
+        --output-format <FORMAT>     Custom output format using fasttemplate syntax
+                                     Available variables: {{proxy}}, {{protocol}},
+                                     {{host}}, {{port}}, {{ip}}, {{country}},
+                                     {{city}}, {{org}}, {{region}}, {{timezone}},
+                                     {{loc}}, {{hostname}}, {{duration}}
 
   IP ROTATOR
     -a, --address <ADDR>:<PORT>      Run proxy server
@@ -52,6 +57,7 @@ Options:
 
 Examples:
   mubeng -f proxies.txt --check --output live.txt
+  mubeng -f proxies.txt --check --output-format "{{proxy}} | {{country}} | {{duration}}"
   mubeng -a localhost:8080 -f live.txt -r 10 -w
 
 `
