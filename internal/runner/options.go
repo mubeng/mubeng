@@ -51,6 +51,8 @@ func Options() *common.Options {
 	flag.StringVar(&opt.Output, "o", "", "")
 	flag.StringVar(&opt.Output, "output", "", "")
 
+	flag.StringVar(&opt.OutputFormat, "output-format", "", "")
+
 	flag.BoolVar(&doUpdate, "u", false, "")
 	flag.BoolVar(&doUpdate, "update", false, "")
 

@@ -237,6 +237,47 @@ The above case also uses `--output` flag to save a live proxy of specific countr
   <i>(Figure: Checking proxies mubeng with max. 5s timeout)</i>
 </p>
 
+#### Custom Output Format
+
+You can customize the output format of the proxy checker using the `--output-format` flag with [fasttemplate](https://github.com/valyala/fasttemplate) syntax:
+
+```bash
+▶ mubeng -f proxies.txt --check --output-format "{{proxy}} | {{country}} | {{duration}}"
+```
+
+**Available template variables:**
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{{proxy}}` | Full proxy URL | `http://192.168.1.1:8080` |
+| `{{protocol}}` | Proxy protocol scheme | `http`, `https`, `socks5` |
+| `{{host}}` | Proxy host/IP address | `192.168.1.1` |
+| `{{port}}` | Proxy port | `8080` |
+| `{{ip}}` | External IP address | `203.0.113.1` |
+| `{{country}}` | Country code | `US`, `UK`, `AU` |
+| `{{city}}` | City name | `New York`, `London` |
+| `{{org}}` | Organization/ISP | `Google Inc.` |
+| `{{region}}` | Region/State | `California`, `England` |
+| `{{timezone}}` | Timezone | `America/New_York` |
+| `{{loc}}` | Latitude,Longitude | `40.7128,-74.0060` |
+| `{{hostname}}` | Hostname | `example.com` |
+| `{{duration}}` | Response time | `245ms` |
+
+**Examples:**
+
+```bash
+# JSON-like format
+▶ mubeng -f proxies.txt --check --output-format '{"proxy":"{{proxy}}","country":"{{country}}","duration":"{{duration}}"}'
+
+# CSV format
+▶ mubeng -f proxies.txt --check --output-format "{{proxy}},{{country}},{{city}},{{duration}}"
+
+# Custom detailed format
+▶ mubeng -f proxies.txt --check --output-format "[{{country}}] {{proxy}} ({{org}}) - {{duration}}"
+```
+
+When using `--output-format`, the formatted output is applied to both console display and file output (when using `-o`/`--output` flag).
+
 ### Proxy IP rotator
 
 Furthermore, if you wish to do proxy IP rotator from proxies that are still alive earlier from the results of checking `(live.txt)` _(or if you have your own list)_, you must use `-a` _(--address)_ flag instead to run proxy server:

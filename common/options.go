@@ -23,6 +23,7 @@ type Options struct {
 	Goroutine    int
 	Method       string
 	Output       string
+	OutputFormat string
 	Rotate       int
 	RotateOnErr  bool
 	RemoveOnErr  bool
