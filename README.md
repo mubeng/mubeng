@@ -232,6 +232,11 @@ Pass `--check` flag in command to perform proxy checks:
 
 The above case also uses `--output` flag to save a live proxy of specific country code with `--only-cc` flag (`ISO-3166` alpha-2) into file _(live.txt)_ from checking result.
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/97b9e5ad-64bd-403a-bd3a-1bc4eb7fb3f1" height="400"><br />
+  <i>(Figure: Checking proxies mubeng with max. 5s timeout)</i>
+</p>
+
 #### Custom Output Format
 
 You can customize the output format of the proxy checker using the `--output-format` flag with [fasttemplate](https://github.com/valyala/fasttemplate) syntax:
@@ -272,11 +277,6 @@ You can customize the output format of the proxy checker using the `--output-for
 ```
 
 When using `--output-format`, the formatted output is applied to both console display and file output (when using `-o`/`--output` flag).
-
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/97b9e5ad-64bd-403a-bd3a-1bc4eb7fb3f1" height="400"><br />
-  <i>(Figure: Checking proxies mubeng with max. 5s timeout)</i>
-</p>
 
 ### Proxy IP rotator
 
