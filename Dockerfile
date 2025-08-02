@@ -1,4 +1,4 @@
-FROM golang:1.22-alpine AS build
+FROM golang:1.23-alpine AS build
 
 ARG VERSION
 
@@ -16,6 +16,11 @@ RUN go build -ldflags "-s -w -X github.com/mubeng/mubeng/common.Version=${VERSIO
 
 FROM alpine:latest
 
-COPY --from=build /app/bin/mubeng /bin/mubeng
-ENV HOME /
-ENTRYPOINT ["/bin/mubeng"]
+COPY --from=build /app/bin/mubeng /usr/local/bin/mubeng
+
+RUN addgroup -g "2000" mubeng && \
+	adduser -g "mubeng" -G "mubeng" -u "1000" -h "/app" -D mubeng
+
+USER mubeng:mubeng
+
+ENTRYPOINT ["mubeng"]
