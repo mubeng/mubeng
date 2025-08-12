@@ -13,7 +13,7 @@ jobs:
     name: "Release binary"
     runs-on: ubuntu-latest
     steps: 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with: 
           fetch-depth: 0
       - uses: actions/setup-go@v5
@@ -30,7 +30,7 @@ jobs:
     name: "Publish to GHCR"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io

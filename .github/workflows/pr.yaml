@@ -11,11 +11,11 @@ jobs:
     name: "Pull Request Checks"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
-      - uses: golangci/golangci-lint-action@v6
+      - uses: golangci/golangci-lint-action@v8
       - uses: github/codeql-action/init@v3
         with:
           languages: go
