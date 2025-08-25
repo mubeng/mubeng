@@ -8,10 +8,10 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-retryablehttp"
+	"github.com/logrusorgru/aurora"
 	"github.com/mubeng/mubeng/common"
 	"github.com/mubeng/mubeng/pkg/helper"
 	"github.com/mubeng/mubeng/pkg/mubeng"
-	"github.com/logrusorgru/aurora"
 	"github.com/sourcegraph/conc/pool"
 )
 
@@ -35,18 +35,28 @@ func Do(opt *common.Options) {
 			}
 
 			if err != nil {
-				if opt.Verbose {
+				if opt.Verbose && opt.OutputFormat == "" {
 					fmt.Printf("[%s] %s\n", aurora.Red("DIED"), address)
 				}
 			} else {
-				fmt.Printf(
-					"[%s] [%s] [%s] %s (%s)\n",
-					aurora.Green("LIVE"), aurora.Magenta(addr.Country),
-					aurora.Cyan(addr.IP), address, aurora.Yellow(addr.Duration),
-				)
+				resultOutput := address
+
+				if opt.OutputFormat != "" {
+					proxyInfo := parseProxyAddr(address)
+					proxyInfo.IPInfo = addr
+					output := formatOutput(opt.OutputFormat, proxyInfo)
+					resultOutput = output
+					fmt.Println(output)
+				} else {
+					fmt.Printf(
+						"[%s] [%s] [%s] %s (%s)\n",
+						aurora.Green("LIVE"), aurora.Magenta(addr.Country),
+						aurora.Cyan(addr.IP), address, aurora.Yellow(addr.Duration),
+					)
+				}
 
 				if opt.Output != "" {
-					fmt.Fprintf(opt.Result, "%s\n", address)
+					fmt.Fprintf(opt.Result, "%s\n", resultOutput)
 				}
 			}
 		})
