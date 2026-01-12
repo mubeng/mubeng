@@ -77,6 +77,7 @@ func (p *Proxy) onRequest(req *http.Request, ctx *goproxy.ProxyCtx) (*http.Reque
 			if err != nil {
 				if metricsEnabled {
 					metrics.RetriesTotal.WithLabelValues(proxy).Inc()
+					metrics.ProxyAttemptsTotal.WithLabelValues(proxy, metrics.OutcomeFailure).Inc()
 				}
 
 				if i >= p.Options.MaxErrors && p.Options.MaxErrors >= 0 {
@@ -126,6 +127,10 @@ func (p *Proxy) onRequest(req *http.Request, ctx *goproxy.ProxyCtx) (*http.Reque
 			}
 			resp.Body = io.NopCloser(bytes.NewBuffer(buf))
 
+			if metricsEnabled {
+				metrics.ProxyAttemptsTotal.WithLabelValues(proxy, metrics.OutcomeSuccess).Inc()
+			}
+
 			result.response = resp
 			result.retryCount = i
 			resChan <- result
@@ -144,7 +149,11 @@ func (p *Proxy) onRequest(req *http.Request, ctx *goproxy.ProxyCtx) (*http.Reque
 
 		if metricsEnabled {
 			statusCode := strconv.Itoa(resp.StatusCode)
-			metrics.RequestsTotal.WithLabelValues(req.Method, statusCode, result.proxy).Inc()
+			retried := "false"
+			if result.retryCount > 0 {
+				retried = "true"
+			}
+			metrics.RequestsTotal.WithLabelValues(req.Method, statusCode, result.proxy, retried).Inc()
 			metrics.RequestDuration.WithLabelValues(req.Method, result.proxy).Observe(duration)
 			metrics.ProxyRequestsTotal.WithLabelValues(result.proxy, "success").Inc()
 		}
@@ -153,9 +162,13 @@ func (p *Proxy) onRequest(req *http.Request, ctx *goproxy.ProxyCtx) (*http.Reque
 		resp = serverErr(req)
 
 		if metricsEnabled {
+			retried := "false"
+			if result.retryCount > 0 {
+				retried = "true"
+			}
 			errorType := metrics.ClassifyError(result.err)
 			metrics.RequestErrorsTotal.WithLabelValues(errorType, result.proxy).Inc()
-			metrics.RequestsTotal.WithLabelValues(req.Method, "502", result.proxy).Inc()
+			metrics.RequestsTotal.WithLabelValues(req.Method, "502", result.proxy, retried).Inc()
 			metrics.RequestDuration.WithLabelValues(req.Method, result.proxy).Observe(duration)
 			metrics.ProxyRequestsTotal.WithLabelValues(result.proxy, "error").Inc()
 		}

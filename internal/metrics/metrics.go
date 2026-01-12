@@ -12,14 +12,19 @@ const (
 	LabelStatus    = "status"
 	LabelProxy     = "proxy"
 	LabelErrorType = "error_type"
+	LabelOutcome   = "outcome"
+	LabelRetried   = "retried"
 
-	ErrorTypeTimeout          = "timeout"
+	OutcomeSuccess = "success"
+	OutcomeFailure = "failure"
+
+	ErrorTypeTimeout           = "timeout"
 	ErrorTypeConnectionRefused = "connection_refused"
-	ErrorTypeConnectionReset  = "connection_reset"
-	ErrorTypeDNS              = "dns_error"
-	ErrorTypeTLS              = "tls_error"
-	ErrorTypeProxyAuth        = "proxy_auth_failed"
-	ErrorTypeOther            = "other"
+	ErrorTypeConnectionReset   = "connection_reset"
+	ErrorTypeDNS               = "dns_error"
+	ErrorTypeTLS               = "tls_error"
+	ErrorTypeProxyAuth         = "proxy_auth_failed"
+	ErrorTypeOther             = "other"
 )
 
 var (
@@ -27,9 +32,18 @@ var (
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "requests_total",
-			Help:      "Total number of requests processed",
+			Help:      "Total number of requests processed (final outcome)",
 		},
-		[]string{LabelMethod, LabelStatus, LabelProxy},
+		[]string{LabelMethod, LabelStatus, LabelProxy, LabelRetried},
+	)
+
+	ProxyAttemptsTotal = promauto.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "proxy_attempts_total",
+			Help:      "Total proxy attempts including retries (each attempt counted)",
+		},
+		[]string{LabelProxy, LabelOutcome},
 	)
 
 	RequestDuration = promauto.NewHistogramVec(

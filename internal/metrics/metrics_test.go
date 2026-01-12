@@ -11,18 +11,34 @@ import (
 )
 
 func TestRequestsTotal(t *testing.T) {
-	RequestsTotal.WithLabelValues("GET", "200", "http://proxy1:8080").Inc()
-	RequestsTotal.WithLabelValues("GET", "200", "http://proxy1:8080").Inc()
-	RequestsTotal.WithLabelValues("POST", "500", "http://proxy2:8080").Inc()
+	RequestsTotal.WithLabelValues("GET", "200", "http://proxy1:8080", "false").Inc()
+	RequestsTotal.WithLabelValues("GET", "200", "http://proxy1:8080", "false").Inc()
+	RequestsTotal.WithLabelValues("POST", "500", "http://proxy2:8080", "true").Inc()
 
-	count := testutil.ToFloat64(RequestsTotal.WithLabelValues("GET", "200", "http://proxy1:8080"))
+	count := testutil.ToFloat64(RequestsTotal.WithLabelValues("GET", "200", "http://proxy1:8080", "false"))
 	if count != 2 {
 		t.Errorf("expected 2 GET 200 requests, got %f", count)
 	}
 
-	count = testutil.ToFloat64(RequestsTotal.WithLabelValues("POST", "500", "http://proxy2:8080"))
+	count = testutil.ToFloat64(RequestsTotal.WithLabelValues("POST", "500", "http://proxy2:8080", "true"))
 	if count != 1 {
-		t.Errorf("expected 1 POST 500 request, got %f", count)
+		t.Errorf("expected 1 POST 500 retried request, got %f", count)
+	}
+}
+
+func TestProxyAttemptsTotal(t *testing.T) {
+	ProxyAttemptsTotal.WithLabelValues("http://proxy1:8080", OutcomeSuccess).Inc()
+	ProxyAttemptsTotal.WithLabelValues("http://proxy1:8080", OutcomeFailure).Inc()
+	ProxyAttemptsTotal.WithLabelValues("http://proxy1:8080", OutcomeFailure).Inc()
+
+	successCount := testutil.ToFloat64(ProxyAttemptsTotal.WithLabelValues("http://proxy1:8080", OutcomeSuccess))
+	if successCount != 1 {
+		t.Errorf("expected 1 success attempt, got %f", successCount)
+	}
+
+	failureCount := testutil.ToFloat64(ProxyAttemptsTotal.WithLabelValues("http://proxy1:8080", OutcomeFailure))
+	if failureCount != 2 {
+		t.Errorf("expected 2 failure attempts, got %f", failureCount)
 	}
 }
 
