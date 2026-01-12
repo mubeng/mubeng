@@ -54,11 +54,13 @@ Options:
         --max-redirs <N>             Max. redirects allowed (default: 10)
     -s, --sync                       Syncrounus mode
     -w, --watch                      Watch proxy file, live-reload from changes
+    -M, --metrics <ADDR>:<PORT>      Prometheus metrics server address (e.g., :9090)
 
 Examples:
   mubeng -f proxies.txt --check --output live.txt
   mubeng -f proxies.txt --check --output-format "{{proxy}} | {{country}} | {{duration}}"
   mubeng -a localhost:8080 -f live.txt -r 10 -w
+  mubeng -a localhost:8080 -f live.txt --metrics :9090
 
 `
 )

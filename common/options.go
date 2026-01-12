@@ -22,6 +22,7 @@ type Options struct {
 	File         string
 	Goroutine    int
 	Method       string
+	Metrics      string
 	Output       string
 	OutputFormat string
 	Rotate       int
