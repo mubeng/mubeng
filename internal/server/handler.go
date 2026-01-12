@@ -169,7 +169,6 @@ func (p *Proxy) onRequest(req *http.Request, ctx *goproxy.ProxyCtx) (*http.Reque
 			errorType := metrics.ClassifyError(result.err)
 			metrics.RequestErrorsTotal.WithLabelValues(errorType, result.proxy).Inc()
 			metrics.RequestsTotal.WithLabelValues(req.Method, "502", result.proxy, retried).Inc()
-			metrics.RequestDuration.WithLabelValues(req.Method, result.proxy).Observe(duration)
 			metrics.ProxyRequestsTotal.WithLabelValues(result.proxy, "error").Inc()
 		}
 	}

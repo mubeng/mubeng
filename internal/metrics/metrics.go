@@ -50,7 +50,7 @@ var (
 		prometheus.HistogramOpts{
 			Namespace: namespace,
 			Name:      "request_duration_seconds",
-			Help:      "Request latency distribution in seconds",
+			Help:      "Successful request latency distribution in seconds",
 			Buckets:   prometheus.DefBuckets,
 		},
 		[]string{LabelMethod, LabelProxy},
