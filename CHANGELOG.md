@@ -2,6 +2,15 @@
 
 All notable changes to this project should be documented in this file.
 
+### TBD
+
+- Minor
+  - Add Prometheus metrics support with `-M/--metrics` flag (close #222)
+    - Request counts, latency histograms, error rates by type
+    - Per-proxy success/failure tracking
+    - Active connections, retry counts, proxy pool size
+    - Proxy removal tracking
+
 ### v0.11.0
 
 - Minor
