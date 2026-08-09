@@ -137,7 +137,7 @@ Here are all the options it supports.
 | -A, --auth `<USER>:<PASS>`      | Set authorization for proxy server.                           |
 | -d, --daemon                    | Daemonize proxy server.                                       |
 | -c, --check                     | To perform proxy live check.                                  |
-| -g, --goroutine `<N>`           | Max. goroutine to use (default: 50).                          |
+| -g, --goroutine `<N>`           | Max. concurrent goroutines (min: 1; 1 runs checks serially; default: 50). |
 |     --only-cc `<AA>,<BB>`       | Only show specific country code (comma separated).            |
 | -t, --timeout                   | Max. time allowed for proxy server/check (default: 30s).      |
 | -r, --rotate `<AFTER>`          | Rotate proxy IP for every `AFTER` request (default: 1).       |

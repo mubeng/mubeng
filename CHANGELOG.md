@@ -2,6 +2,11 @@
 
 All notable changes to this project should be documented in this file.
 
+### Unreleased
+
+- Patch
+  - Reject proxy checks configured with fewer than one goroutine
+
 ### v0.11.0
 
 - Minor

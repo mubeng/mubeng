@@ -31,7 +31,7 @@ Options:
 
   PROXY CHECKER
     -c, --check                      Perform proxy check
-    -g, --goroutine <N>              Max. goroutine to use (default: 50)
+    -g, --goroutine <N>              Max. concurrent goroutines (min: 1; 1 runs checks serially; default: 50)
         --only-cc <AA>,<BB>          Only for specific country code (comma separated)
         --output-format <FORMAT>     Custom output format using fasttemplate syntax
                                      Available variables: {{proxy}}, {{protocol}},

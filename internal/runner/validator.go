@@ -14,6 +14,10 @@ import (
 
 // validate user-supplied option values before Runner.
 func validate(opt *common.Options) error {
+	if opt.Address == "" && opt.Check && opt.Goroutine < 1 {
+		return errors.New("goroutine must be at least 1 when using --check")
+	}
+
 	var err error
 
 	if hasStdin() {
