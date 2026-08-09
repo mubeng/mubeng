@@ -2,6 +2,11 @@
 
 All notable changes to this project should be documented in this file.
 
+### Unreleased
+
+- Patch
+  - Handle SIGTERM gracefully when running the proxy server
+
 ### v0.11.0
 
 - Minor
