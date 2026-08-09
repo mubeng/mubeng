@@ -2,6 +2,11 @@
 
 All notable changes to this project should be documented in this file.
 
+### Unreleased
+
+- Patch
+  - Test every module package in the short test target
+
 ### v0.11.0
 
 - Minor
