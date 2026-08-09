@@ -5,8 +5,8 @@ import (
 	"strconv"
 
 	"github.com/kardianos/service"
-	"github.com/projectdiscovery/gologger"
 	"github.com/mubeng/mubeng/common"
+	"github.com/projectdiscovery/gologger"
 )
 
 // New to initialize mubeng in daemon
@@ -20,6 +20,9 @@ func New(opt *common.Options) error {
 		"-r", strconv.Itoa(opt.Rotate),
 		"-m", opt.Method,
 		"-o", opt.Output,
+		"--max-errors", strconv.Itoa(opt.MaxErrors),
+		"--max-redirs", strconv.Itoa(opt.MaxRedirects),
+		"--max-retries", strconv.Itoa(opt.MaxRetries),
 	}
 
 	if opt.Sync {
@@ -32,6 +35,14 @@ func New(opt *common.Options) error {
 
 	if opt.Watch {
 		args = append(args, "-w")
+	}
+
+	if opt.RotateOnErr {
+		args = append(args, "--rotate-on-error")
+	}
+
+	if opt.RemoveOnErr {
+		args = append(args, "--remove-on-error")
 	}
 
 	o := make(service.KeyValue)
