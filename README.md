@@ -7,7 +7,6 @@
 
 <p align="center">
 	<a href="https://golang.org"><img src="https://img.shields.io/badge/made%20with-Go-brightgreen"></a>
-	<a href="https://goreportcard.com/report/github.com/mubeng/mubeng"><img src="https://goreportcard.com/badge/github.com/mubeng/mubeng"></a>
 	<a href="https://github.com/mubeng/mubeng/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-yellowgreen"></a>
 	<a href="#"><img src="https://img.shields.io/badge/platform-osx%2Flinux%2Fwindows-green"></a>
 	<a href="https://github.com/mubeng/mubeng/releases"><img src="https://img.shields.io/github/release/mubeng/mubeng"></a>
@@ -20,6 +19,14 @@
   <a href="https://pkg.go.dev/github.com/mubeng/mubeng/pkg/mubeng">Documentation</a> •
   <a href="https://github.com/mubeng/mubeng/issues/new/choose">Report Issues</a>
 </p>
+
+---
+
+| <a href="https://www.rapidproxy.io/?ref=mubeng"><img alt="rapidproxy" src="https://github.com/user-attachments/assets/ede7da69-75f9-4055-85e3-cf333a7615a0" /></a> |
+| -- |
+| [**RapidProxy**](https://www.rapidproxy.io/?ref=mubeng) is a residential proxy platform with 90M+ real IPs across 200+ countries. It supports rotation, geo-targeting, and high concurrency to improve scraping success and reduce bans. Start your free trial today! |
+
+###### Support this project by [becoming a sponsor](https://github.com/sponsors/dwisiswant0). Your logo will show up here with a link to your website.
 
 ---
 
@@ -43,7 +50,7 @@
     	- [Templating](#templating)
     	- [Amazon API Gateway](#amazon-api-gateway)
 - [Limitations](#limitations)
-	- [Known Bugs](#known-bugs)
+	<!-- - [Known Bugs](#known-bugs) -->
 - [Contributors](#contributors)
 - [Pronunciation](#pronunciation)
 - [Changes](#changes)
@@ -430,6 +437,8 @@ This project exists thanks to all the people who contribute. To learn how to set
 # Changes
 
 For changes, see [CHANGELOG.md](https://github.com/mubeng/mubeng/blob/master/CHANGELOG.md).
+
+# Sponsors
 
 # License
 
