@@ -9,15 +9,26 @@ import (
 	"io"
 	"net/http"
 	"path/filepath"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/elazarl/goproxy"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/mubeng/mubeng/common"
+	"github.com/mubeng/mubeng/internal/metrics"
 	"github.com/mubeng/mubeng/internal/proxygateway"
 	"github.com/mubeng/mubeng/pkg/helper/awsurl"
 	"github.com/mubeng/mubeng/pkg/mubeng"
 )
+
+type requestResult struct {
+	response    *http.Response
+	err         error
+	proxy       string
+	retryCount  int
+	startTime   time.Time
+}
 
 // onRequest handles client request
 func (p *Proxy) onRequest(req *http.Request, ctx *goproxy.ProxyCtx) (*http.Request, *http.Response) {
@@ -30,34 +41,49 @@ func (p *Proxy) onRequest(req *http.Request, ctx *goproxy.ProxyCtx) (*http.Reque
 		return req, serverErr(req)
 	}
 
-	resChan := make(chan interface{})
+	if metricsEnabled {
+		metrics.ActiveConnections.Inc()
+		defer metrics.ActiveConnections.Dec()
+	}
+
+	resChan := make(chan requestResult)
 
 	go func(r *http.Request) {
 		log.Debugf("%s %s %s", r.RemoteAddr, r.Method, r.URL)
 
+		result := requestResult{startTime: time.Now()}
 		i := 0
 		for {
 			proxy := p.rotateProxy()
+			result.proxy = proxy
 
 			retryablehttpClient, err := p.getClient(r, proxy)
 			if err != nil {
-				resChan <- err
-
+				result.err = err
+				result.retryCount = i
+				resChan <- result
 				return
 			}
 
 			retryablehttpRequest, err := retryablehttp.FromRequest(r)
 			if err != nil {
-				resChan <- err
-
+				result.err = err
+				result.retryCount = i
+				resChan <- result
 				return
 			}
 
 			resp, err := retryablehttpClient.Do(retryablehttpRequest)
 			if err != nil {
-				if i >= p.Options.MaxErrors && p.Options.MaxErrors >= 0 {
-					resChan <- err
+				if metricsEnabled {
+					metrics.RetriesTotal.WithLabelValues(proxy).Inc()
+					metrics.ProxyAttemptsTotal.WithLabelValues(proxy, metrics.OutcomeFailure).Inc()
+				}
 
+				if i >= p.Options.MaxErrors && p.Options.MaxErrors >= 0 {
+					result.err = err
+					result.retryCount = i
+					resChan <- result
 					return
 				}
 
@@ -82,11 +108,11 @@ func (p *Proxy) onRequest(req *http.Request, ctx *goproxy.ProxyCtx) (*http.Reque
 					)
 
 					i++
-
 					continue
 				} else {
-					resChan <- err
-
+					result.err = err
+					result.retryCount = i
+					resChan <- result
 					return
 				}
 			}
@@ -94,29 +120,57 @@ func (p *Proxy) onRequest(req *http.Request, ctx *goproxy.ProxyCtx) (*http.Reque
 
 			buf, err := io.ReadAll(resp.Body)
 			if err != nil {
-				resChan <- err
-
+				result.err = err
+				result.retryCount = i
+				resChan <- result
 				return
 			}
 			resp.Body = io.NopCloser(bytes.NewBuffer(buf))
 
-			resChan <- resp
+			if metricsEnabled {
+				metrics.ProxyAttemptsTotal.WithLabelValues(proxy, metrics.OutcomeSuccess).Inc()
+			}
 
+			result.response = resp
+			result.retryCount = i
+			resChan <- result
 			return
 		}
 	}(req)
 
 	var resp *http.Response
 
-	res := <-resChan
-	switch res := res.(type) {
-	case *http.Response:
-		resp = res
+	result := <-resChan
+	duration := time.Since(result.startTime).Seconds()
+
+	if result.response != nil {
+		resp = result.response
 		log.Debug(req.RemoteAddr, " ", resp.Status)
-	case error:
-		err := res
-		log.Errorf("%s %s", req.RemoteAddr, err)
+
+		if metricsEnabled {
+			statusCode := strconv.Itoa(resp.StatusCode)
+			retried := "false"
+			if result.retryCount > 0 {
+				retried = "true"
+			}
+			metrics.RequestsTotal.WithLabelValues(req.Method, statusCode, result.proxy, retried).Inc()
+			metrics.RequestDuration.WithLabelValues(req.Method, result.proxy).Observe(duration)
+			metrics.ProxyRequestsTotal.WithLabelValues(result.proxy, "success").Inc()
+		}
+	} else if result.err != nil {
+		log.Errorf("%s %s", req.RemoteAddr, result.err)
 		resp = serverErr(req)
+
+		if metricsEnabled {
+			retried := "false"
+			if result.retryCount > 0 {
+				retried = "true"
+			}
+			errorType := metrics.ClassifyError(result.err)
+			metrics.RequestErrorsTotal.WithLabelValues(errorType, result.proxy).Inc()
+			metrics.RequestsTotal.WithLabelValues(req.Method, "502", result.proxy, retried).Inc()
+			metrics.ProxyRequestsTotal.WithLabelValues(result.proxy, "error").Inc()
+		}
 	}
 
 	return req, resp
@@ -184,6 +238,12 @@ func (p *Proxy) removeProxy(target string) {
 	err := p.Options.ProxyManager.RemoveProxy(target)
 	if err != nil {
 		log.Error(err)
+		return
+	}
+
+	if metricsEnabled {
+		metrics.ProxyRemovalsTotal.WithLabelValues(target).Inc()
+		metrics.ProxyPoolSize.Set(float64(p.Options.ProxyManager.Count()))
 	}
 }
 

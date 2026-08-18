@@ -9,6 +9,7 @@ import (
 	"github.com/henvic/httpretty"
 	"github.com/mbndr/logo"
 	"github.com/mubeng/mubeng/common"
+	"github.com/mubeng/mubeng/internal/metrics"
 	"github.com/mubeng/mubeng/internal/proxygateway"
 )
 
@@ -67,6 +68,20 @@ func Run(opt *common.Options) {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 	go interrupt(stop)
+
+	if opt.Metrics != "" {
+		metricsEnabled = true
+		metricsServer = metrics.NewServer(opt.Metrics)
+
+		metrics.ProxyPoolSize.Set(float64(opt.ProxyManager.Count()))
+
+		go func() {
+			log.Infof("Starting metrics server on %s", opt.Metrics)
+			if err := metricsServer.Start(); err != nil && err != http.ErrServerClosed {
+				log.Errorf("Metrics server error: %s", err)
+			}
+		}()
+	}
 
 	log.Infof("%d proxies loaded", opt.ProxyManager.Count())
 
