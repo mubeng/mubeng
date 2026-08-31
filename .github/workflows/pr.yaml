@@ -11,15 +11,15 @@ jobs:
     name: "Pull Request Checks"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
         with:
           go-version-file: 'go.mod'
-      - uses: golangci/golangci-lint-action@v6
-      - uses: github/codeql-action/init@v3
+      - uses: golangci/golangci-lint-action@v8
+      - uses: github/codeql-action/init@v4
         with:
           languages: go
       - run: make test
       - run: make build
       - name: "Perform CodeQL Analysis"
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
