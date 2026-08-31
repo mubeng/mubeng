@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	mubengerrors "github.com/mubeng/mubeng/common/errors"
 	"io"
 	"net/http"
 	"path/filepath"
@@ -163,6 +164,17 @@ func (p *Proxy) onResponse(resp *http.Response, ctx *goproxy.ProxyCtx) *http.Res
 func (p *Proxy) rotateProxy() string {
 	var proxy string
 	var err error
+
+	count := p.Options.ProxyManager.Count()
+	if count <= 0 {
+		log.Fatalf(mubengerrors.ErrNoProxyLeft.Error())
+	}
+
+	if p.Options.ProxyManager.CurrentIndex <= -1 {
+		p.Options.ProxyManager.CurrentIndex = 0
+	}
+
+	proxy = p.Options.ProxyManager.Proxies[p.Options.ProxyManager.CurrentIndex]
 
 	if ok >= p.Options.Rotate {
 		proxy, err = p.Options.ProxyManager.Rotate(p.Options.Method)
