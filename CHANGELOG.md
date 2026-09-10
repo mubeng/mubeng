@@ -2,6 +2,11 @@
 
 All notable changes to this project should be documented in this file.
 
+### Unreleased
+
+- Patch
+  - Forward retry and error-handling options to daemon services
+
 ### v0.11.0
 
 - Minor
