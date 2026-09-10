@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
 
 	"github.com/elazarl/goproxy"
 	"github.com/henvic/httpretty"
@@ -65,7 +66,7 @@ func Run(opt *common.Options) {
 	}
 
 	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt)
+	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
 	go interrupt(stop)
 
 	log.Infof("%d proxies loaded", opt.ProxyManager.Count())
