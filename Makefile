@@ -4,13 +4,31 @@ APP_NAME = mubeng
 VERSION  = $(shell git describe --always --tags)
 LINT_CMD = "golangci-lint run ./... -v --timeout 5m"
 LINT_BIN = "https://install.goreleaser.com/github.com/golangci/golangci-lint.sh"
+TEST_CMD = go test -short ./...
 
 mubeng: test build
 
 test:
-	@echo "Testing ${APP_NAME} package ${VERSION}"
-	@go test -short github.com/mubeng/mubeng/pkg/mubeng
-	@go test -short github.com/mubeng/mubeng/pkg/helper
+	@if [ "$(VERBOSE)" = "1" ]; then \
+		$(TEST_CMD); \
+	else \
+		output_file=$$(mktemp "$${TMPDIR:-/tmp}/mubeng-test.XXXXXX" 2>&1); \
+		status=$$?; \
+		if [ "$$status" -ne 0 ]; then \
+			printf 'test: failed (exit %s)\n' "$$status"; \
+			printf '%s\n' "$$output_file"; \
+			exit "$$status"; \
+		fi; \
+		trap 'rm -f "$$output_file"' 0; \
+		if $(TEST_CMD) >"$$output_file" 2>&1; then \
+			printf '%s\n' 'test: ok'; \
+		else \
+			status=$$?; \
+			printf 'test: failed (exit %s)\n' "$$status"; \
+			cat "$$output_file"; \
+			exit "$$status"; \
+		fi; \
+	fi
 
 test-extra: golangci-lint test
 
